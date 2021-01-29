@@ -8,8 +8,8 @@ int main()
     short score = 0, bombs, counter, size;
     const short max = 99;
     bool end, debug;
-    cout << "\tÈãðà ÑÀÏ¨Ð" << endl << endl;
-    cout << "Âêëþ÷èòü debug-ðåæèì? 1-äà, 0-íåò\n";
+    cout << "\tÐ˜Ð³Ñ€Ð° Ð¡ÐÐŸÐÐ " << endl << endl;
+    cout << "Ð’ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ debug-Ñ€ÐµÐ¶Ð¸Ð¼? 1-Ð´Ð°, 0-Ð½ÐµÑ‚\n";
     cin >> debug;
     do
     {
@@ -18,7 +18,7 @@ int main()
         counter = 0;
         do
         {
-            cout << "Ââåäèòå ðàçìåð ïîëÿ îò 5 äî 99: ";
+            cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð¿Ð¾Ð»Ñ Ð¾Ñ‚ 5 Ð´Ð¾ 99: ";
             cin >> size;
         } while (size < 5 || size>99);
         for (short i = 0; i < size; i++)
@@ -30,9 +30,9 @@ int main()
         }
         do
         {
-            cout << "Ââåäèòå êîëè÷åñòâî áîìá: ";
+            cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾ Ð±Ð¾Ð¼Ð±: ";
             cin >> bombs;
-            if (bombs < 1 || bombs>(size * size) - 1) cout << "Íåêîððåêòíûé ââîä, ââåäèòå åù¸ ðàç\n";
+            if (bombs < 1 || bombs>(size * size) - 1) cout << "ÐÐµÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ñ‹Ð¹ Ð²Ð²Ð¾Ð´, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ñ‘ Ñ€Ð°Ð·\n";
         } while (bombs < 1 || bombs>(size * size) - 1);
         short a, b;
         for (short i = 0; i < bombs; i++)
@@ -79,7 +79,7 @@ int main()
         {
             do
             {
-                cout << "Ââåäèòå íîìåð ñòðîêè è íîìåð ñòîëáöà: ";
+                cout << "Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ð¸ Ð½Ð¾Ð¼ÐµÑ€ ÑÑ‚Ð¾Ð»Ð±Ñ†Ð°: ";
                 cin >> a >> b;
                 system("cls");
                 if (a < 1 || a > size || b < 1 || b>size)
@@ -96,7 +96,7 @@ int main()
                         }
                         cout << endl;
                     }
-                    cout << "Íåêîððåêòíûé ââîä, ââåäèòå åù¸ ðàç\n";
+                    cout << "ÐÐµÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ñ‹Ð¹ Ð²Ð²Ð¾Ð´, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ñ‘ Ñ€Ð°Ð·\n";
                 }
                 else if (check[a - 1][b - 1] == 1)
                 {
@@ -112,7 +112,7 @@ int main()
                         }
                         cout << endl;
                     }
-                    cout << "Íåò ñìûñëà ðàçìèíèðîâàòü îäíó è òó æå ÿ÷åéêó, ââåäèòå åù¸ ðàç\n";
+                    cout << "ÐÐµÑ‚ ÑÐ¼Ñ‹ÑÐ»Ð° Ñ€Ð°Ð·Ð¼Ð¸Ð½Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð¾Ð´Ð½Ñƒ Ð¸ Ñ‚Ñƒ Ð¶Ðµ ÑÑ‡ÐµÐ¹ÐºÑƒ, Ð²Ð²ÐµÐ´Ð¸Ñ‚Ðµ ÐµÑ‰Ñ‘ Ñ€Ð°Ð·\n";
                 }
             } while (check[a - 1][b - 1] == 1 || (a < 1 || a > size || b < 1 || b>size));
             if (pole[a - 1][b - 1] == 'X')
@@ -125,7 +125,7 @@ int main()
                     }
                     cout << endl;
                 }
-                cout << "BOOM!!!!!Game over\nÓñïåøíûõ ïîïàäàíèé: " << score << endl;
+                cout << "BOOM!!!!!Game over\nÐ£ÑÐ¿ÐµÑˆÐ½Ñ‹Ñ… Ð¿Ð¾Ð¿Ð°Ð´Ð°Ð½Ð¸Ð¹: " << score << endl;
                 score = 0;
                 break;
             }
@@ -236,7 +236,7 @@ int main()
             }
             if (debug == 1)
             {
-                cout << "Ðåæèì îòëàäêè\n";
+                cout << "Ð ÐµÐ¶Ð¸Ð¼ Ð¾Ñ‚Ð»Ð°Ð´ÐºÐ¸\n";
                 for (short i = 0; i < size; i++)
                 {
                     for (short j = 0; j < size; j++)
@@ -261,10 +261,10 @@ int main()
             }
             if (counter == (size * size) - bombs)
             {
-                cout << "Congratulations!!!\nÓñïåøíûõ ïîïàäàíèé: " << score << endl;
+                cout << "Congratulations!!!\nÐ£ÑÐ¿ÐµÑˆÐ½Ñ‹Ñ… Ð¿Ð¾Ð¿Ð°Ð´Ð°Ð½Ð¸Ð¹: " << score << endl;
             }
         }
-        cout << "\tÍà÷àòü ñíà÷àëà?\n1-äà\n0-íåò\n";
+        cout << "\tÐÐ°Ñ‡Ð°Ñ‚ÑŒ ÑÐ½Ð°Ñ‡Ð°Ð»Ð°?\n1-Ð´Ð°\n0-Ð½ÐµÑ‚\n";
         cin >> end;
         system("cls");
     } while (end == 1);
