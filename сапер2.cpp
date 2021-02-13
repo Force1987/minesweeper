@@ -45,8 +45,17 @@ int main()
             }
             else i--;
         }
+        cout << "   ";
+        for (short i = 1; i <= size; i++)
+        {
+            if (i % 10 != 0)cout << i % 10 << " ";
+            else cout << "  ";
+        }
+        cout << endl;
         for (short i = 0; i < size; i++)
         {
+            if (i < 9)cout << " ";
+            cout << i + 1 << " ";
             for (short j = 0; j < size; j++)
             {
                 if (pole[i][j] != 'X')
@@ -84,8 +93,17 @@ int main()
                 system("cls");
                 if (a < 1 || a > size || b < 1 || b>size)
                 {
+                    cout << "   ";
+                    for (short i = 1; i <= size; i++)
+                    {
+                        if (i % 10 != 0)cout << i % 10 << " ";
+                        else cout << "  ";
+                    }
+                    cout << endl;
                     for (short i = 0; i < size; i++)
                     {
+                        if (i < 9)cout << " ";
+                        cout << i + 1 << " ";
                         for (short j = 0; j < size; j++)
                         {
                             if (check[i][j] == 1)
@@ -100,8 +118,17 @@ int main()
                 }
                 else if (check[a - 1][b - 1] == 1)
                 {
+                    cout << "   ";
+                    for (short i = 1; i <= size; i++)
+                    {
+                        if (i % 10 != 0)cout << i % 10 << " ";
+                        else cout << "  ";
+                    }
+                    cout << endl;
                     for (short i = 0; i < size; i++)
                     {
+                        if (i < 9)cout << " ";
+                        cout << i + 1 << " ";
                         for (short j = 0; j < size; j++)
                         {
                             if (check[i][j] == 1)
@@ -117,11 +144,24 @@ int main()
             } while (check[a - 1][b - 1] == 1 || (a < 1 || a > size || b < 1 || b>size));
             if (pole[a - 1][b - 1] == 'X')
             {
+                cout << "   ";
+                for (short i = 1; i <= size; i++)
+                {
+                    if (i % 10 != 0)cout << i % 10 << " ";
+                    else cout << "  ";
+                }
+                cout << endl;
                 for (short i = 0; i < size; i++)
                 {
+                    if (i < 9)cout << " ";
+                    cout << i + 1 << " ";
                     for (short j = 0; j < size; j++)
                     {
-                        if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
+                        if (check[i][j] == 1)
+                        {
+                            if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
+                        }
+                        else cout << "* ";
                     }
                     cout << endl;
                 }
@@ -247,8 +287,17 @@ int main()
                 }
                 cout << endl;
             }
+            cout << "   ";
+            for (short i = 1; i <= size; i++)
+            {
+                if (i % 10 != 0)cout << i % 10 << " ";
+                else cout << "  ";
+            }
+            cout << endl;
             for (short i = 0; i < size; i++)
             {
+                if (i < 9)cout << " ";
+                cout << i + 1 << " ";
                 for (short j = 0; j < size; j++)
                 {
                     if (check[i][j] == 1)
