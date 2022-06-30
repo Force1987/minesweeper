@@ -1,320 +1,181 @@
 #include <iostream>
-#include <ctime>
+#define random(a,b) a+rand()%(b+1-a);
 using namespace std;
+
+int counter;
+
+int chooseSize() {
+
+    int size;
+    do {
+        cout << "Choose the difficulty level: 1-easy, 2-average or 3-difficult" << endl;
+        cin >> size;
+    } while (size < 1 || size > 3);
+    size *= 8;
+    return size;
+}
+
+template <typename T>
+T** createField(int size) {
+
+    T** buffield1 = new T * [size];
+    for (int i = 0; i < size; i++) {
+        buffield1[i] = new T[size]{};
+    }
+    return buffield1;
+}
+
+void set_bomb(int** field1) {
+
+    int x1, y1;
+    int size = _msize(field1) / sizeof(field1[0]);
+    srand(time(NULL));
+    int countBomb = size * size * 0.1;
+    for (int i = 0, x, y; i < countBomb; i++) {
+        x = random(0, size - 1);
+        y = random(0, size - 1);
+        // Если в ячейке бомба, то проверяем координаты следующей ячейки в строке через цикл for по всем ячейкам строки, пока не найдём пустую.
+        // Эта часть будет актуальна для большего процента бомб. Можно использовать вместо декремента в конце итерации.
+        /*while (field1[y][x] == 9) {
+            for (int i = 0; field1[y][x] == 9 && i < size; i++) {
+                if (++x == size) {
+                    x = 0;
+                }
+            }
+            if (field1[y][x] == 9) {
+                if (++y == size) {
+                    y = 0;
+                }
+            }
+        }*/
+        if (field1[y][x] != 9) {
+            field1[y][x] = 9;
+            for (y1 = y - 1; y1 <= y + 1 && y1 < size; y1++) {
+                for (x1 = x - 1; x1 <= x + 1 && x1 < size; x1++) {
+                    if (y1 < 0) {
+                        y1++;
+                    }
+                    if (x1 < 0) {
+                        x1++;
+                    }
+                    if (field1[y1][x1] != 9) {
+                        field1[y1][x1] += 1;
+                    }
+                }
+            }
+        }
+        else {
+            i--;
+        }
+    }
+}
+
+void showField(int** field1, bool** field2) {      //по bool смотреть окрыто или закрыто а по int 
+
+    system("cls");
+    int size = _msize(field1) / sizeof(field1[0]);
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (field2[i][j]==true) {
+                if (field1[i][j] == 9) {
+                    cout << 'X'<<' ';
+                }
+                else {
+                    cout << field1[i][j] << ' ';
+                }
+            }
+            else {
+                cout << '*'<<' ';
+            }
+        }
+            cout << endl;
+    }
+}
+
+void openCell(bool** field2, int y1, int x1) {
+    *(*(field2 + y1) + x1) = true;
+}
+
+void clearance(int** field1, bool** field2, const int x, const int y) {
+
+    int size = _msize(field1) / sizeof(field1[0]);
+        for (int y1 = y - 1; y1 <= y + 1 && y1 < size; y1++) {
+            for (int x1 = x - 1; x1 <= x + 1 && x1 < size; x1++) {
+                if (y1 < 0) {
+                    y1++;
+                }
+                if (x1 < 0) {
+                    x1++;
+                }
+                if (field1[y1][x1] > 0&& field2[y1][x1]== false) {
+                    openCell(field2, y1, x1);
+                }
+                else if (field2[y1][x1] == false &&field1[y1][x1] == 0) {
+                    openCell(field2, y1, x1);
+                    clearance(field1,field2,x1,y1);
+                }
+            }
+        }
+}
+
+void shoot(int** field1, bool** field2) {
+
+    int size = _msize(field1) / sizeof(field1[0]);
+        int x, y;
+        do {
+            cout << "Enter the row index: ";
+            cin >> y;
+        } while (y >= size);
+        do {
+            cout << "Enter the column index: ";
+            cin >> x;
+        } while (x >= size);
+        if (field2[y][x] == 1) {
+            cout << "It makes no sense to clear the same cell, input again\n";
+            system("pause");
+        }
+        else if (field1[y][x] == 9) {
+            int size = _msize(field1) / sizeof(field1[0]);
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    field2[i][j] = true;
+                }
+            }
+            counter = 0;
+        }
+        else if (field1[y][x] > 0) {
+            openCell(field2, y, x);
+        }
+        else {
+            openCell(field2, y, x);
+            clearance(field1,field2,x,y);
+        }
+}
+
+bool checkWin(int size) {
+
+    if (counter == int(size * size * 0.1)) {
+        cout << "You WIN!";
+        return 0;
+    }
+    else if (counter == 0) {
+        cout << "BOOM!!!!!Game over.\n";
+        return 0;
+    }
+    return 1;
+}
+
 int main()
 {
-    setlocale(LC_ALL, "RUS");
-    srand(time(NULL));
-    short score = 0, bombs, counter, size;
-    const short max = 99;
-    bool end, debug;
-    cout << "\tИгра САПЁР" << endl << endl;
-    cout << "Включить debug-режим? 1-да, 0-нет\n";
-    cin >> debug;
-    do
-    {
-        char pole[max][max]{};
-        bool check[max][max]{};
-        counter = 0;
-        do
-        {
-            cout << "Введите размер поля от 5 до 99: ";
-            cin >> size;
-        } while (size < 5 || size>99);
-        for (short i = 0; i < size; i++)
-        {
-            for (short j = 0; j < size; j++)
-            {
-                pole[i][j] = '0';
-            }
-        }
-        do
-        {
-            cout << "Введите количество бомб: ";
-            cin >> bombs;
-            if (bombs < 1 || bombs>(size * size) - 1) cout << "Некорректный ввод, введите ещё раз\n";
-        } while (bombs < 1 || bombs>(size * size) - 1);
-        short a, b;
-        for (short i = 0; i < bombs; i++)
-        {
-            a = rand() % size;
-            b = rand() % size;
-            if (pole[a][b] != 'X')
-            {
-                pole[a][b] = 'X';
-            }
-            else i--;
-        }
-        cout << "   ";
-        for (short i = 1; i <= size; i++)
-        {
-            if (i % 10 != 0)cout << i % 10 << " ";
-            else cout << "  ";
-        }
-        cout << endl;
-        for (short i = 0; i < size; i++)
-        {
-            if (i < 9)cout << " ";
-            cout << i + 1 << " ";
-            for (short j = 0; j < size; j++)
-            {
-                if (pole[i][j] != 'X')
-                {
-                    if (pole[i + 1][j + 1] == 'X' && i + 1 >= 0 && i + 1 < size && j + 1 >= 0 && j + 1 < size)pole[i][j] ++;
-                    if (pole[i + 1][j] == 'X' && i + 1 >= 0 && i + 1 < size && j >= 0 && j < size)pole[i][j] ++;
-                    if (pole[i + 1][j - 1] == 'X' && i + 1 >= 0 && i + 1 < size && j - 1 >= 0 && j - 1 < size)pole[i][j] ++;
-                    if (pole[i][j + 1] == 'X' && i >= 0 && i < size && j + 1 >= 0 && j + 1 < size)pole[i][j] ++;
-                    if (pole[i][j - 1] == 'X' && i >= 0 && i < size && j - 1 >= 0 && j - 1 < size)pole[i][j] ++;
-                    if (pole[i - 1][j + 1] == 'X' && i - 1 >= 0 && i - 1 < size && j + 1 >= 0 && j + 1 < size)pole[i][j] ++;
-                    if (pole[i - 1][j] == 'X' && i - 1 >= 0 && i - 1 < size && j >= 0 && j < size)pole[i][j] ++;
-                    if (pole[i - 1][j - 1] == 'X' && i - 1 >= 0 && i - 1 < size && j - 1 >= 0 && j - 1 < size)pole[i][j] ++;
-                }
-                if (debug == 1)
-                {
-                    if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                }
-                else
-                {
-                    if (check[i][j] == 1)
-                    {
-                        if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                    }
-                    else cout << "* ";
-                }
-            }
-            cout << endl;
-        }
-        while (counter < (size * size) - bombs)
-        {
-            do
-            {
-                cout << "Введите номер строки и номер столбца: ";
-                cin >> a >> b;
-                system("cls");
-                if (a < 1 || a > size || b < 1 || b>size)
-                {
-                    cout << "   ";
-                    for (short i = 1; i <= size; i++)
-                    {
-                        if (i % 10 != 0)cout << i % 10 << " ";
-                        else cout << "  ";
-                    }
-                    cout << endl;
-                    for (short i = 0; i < size; i++)
-                    {
-                        if (i < 9)cout << " ";
-                        cout << i + 1 << " ";
-                        for (short j = 0; j < size; j++)
-                        {
-                            if (check[i][j] == 1)
-                            {
-                                if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                            }
-                            else cout << "* ";
-                        }
-                        cout << endl;
-                    }
-                    cout << "Некорректный ввод, введите ещё раз\n";
-                }
-                else if (check[a - 1][b - 1] == 1)
-                {
-                    cout << "   ";
-                    for (short i = 1; i <= size; i++)
-                    {
-                        if (i % 10 != 0)cout << i % 10 << " ";
-                        else cout << "  ";
-                    }
-                    cout << endl;
-                    for (short i = 0; i < size; i++)
-                    {
-                        if (i < 9)cout << " ";
-                        cout << i + 1 << " ";
-                        for (short j = 0; j < size; j++)
-                        {
-                            if (check[i][j] == 1)
-                            {
-                                if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                            }
-                            else cout << "* ";
-                        }
-                        cout << endl;
-                    }
-                    cout << "Нет смысла разминировать одну и ту же ячейку, введите ещё раз\n";
-                }
-            } while (check[a - 1][b - 1] == 1 || (a < 1 || a > size || b < 1 || b>size));
-            if (pole[a - 1][b - 1] == 'X')
-            {
-                cout << "   ";
-                for (short i = 1; i <= size; i++)
-                {
-                    if (i % 10 != 0)cout << i % 10 << " ";
-                    else cout << "  ";
-                }
-                cout << endl;
-                for (short i = 0; i < size; i++)
-                {
-                    if (i < 9)cout << " ";
-                    cout << i + 1 << " ";
-                    for (short j = 0; j < size; j++)
-                    {
-                        if (check[i][j] == 1)
-                        {
-                            if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                        }
-                        else cout << "* ";
-                    }
-                    cout << endl;
-                }
-                cout << "BOOM!!!!!Game over\nУспешных попаданий: " << score << endl;
-                score = 0;
-                break;
-            }
-            else
-            {
-                score++;
-                check[a - 1][b - 1] = 1;
-                counter++;
-                if (pole[a - 1][b - 1] == '0')
-                {
-                    short ip1[max * max]{}, ip2[max * max]{}, index = 0, indexcounter = 0;
-                    ip1[index] = a;
-                    ip2[index] = b;
-                    for (short x, y; ip1[index] != 0; index++)
-                    {
-                        x = ip1[index];
-                        y = ip2[index];
-                        if (pole[x][y] == '0' && x >= 0 && x < size && y >= 0 && y < size && check[x][y] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x + 1;
-                            ip2[indexcounter] = y + 1;
-                        }
-                        if (check[x][y] == 0 && x >= 0 && x < size && y >= 0 && y < size)
-                        {
-                            check[x][y] = 1;
-                            counter++;
-                        }
-                        if (pole[x][y - 1] == '0' && x >= 0 && x < size && y - 1 >= 0 && y - 1 < size && check[x][y - 1] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x + 1;
-                            ip2[indexcounter] = y;
-                        }
-                        if (check[x][y - 1] == 0 && x >= 0 && x < size && y - 1 >= 0 && y - 1 < size)
-                        {
-                            check[x][y - 1] = 1;
-                            counter++;
-                        }
-                        if (pole[x][y - 2] == '0' && x >= 0 && x < size && y - 2 >= 0 && y - 2 < size && check[x][y - 2] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x + 1;
-                            ip2[indexcounter] = y - 1;
-                        }
-                        if (check[x][y - 2] == 0 && x >= 0 && x < size && y - 2 >= 0 && y - 2 < size)
-                        {
-                            check[x][y - 2] = 1;
-                            counter++;
-                        }
-                        if (pole[x - 1][y] == '0' && x - 1 >= 0 && x - 1 < size && y >= 0 && y < size && check[x - 1][y] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x;
-                            ip2[indexcounter] = y + 1;
-                        }
-                        if (check[x - 1][y] == 0 && x - 1 >= 0 && x - 1 < size && y >= 0 && y < size)
-                        {
-                            check[x - 1][y] = 1;
-                            counter++;
-                        }
-                        if (pole[x - 1][y - 2] == '0' && x - 1 >= 0 && x - 1 < size && y - 2 >= 0 && y - 2 < size && check[x - 1][y - 2] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x;
-                            ip2[indexcounter] = y - 1;
-                        }
-                        if (check[x - 1][y - 2] == 0 && x - 1 >= 0 && x - 1 < size && y - 2 >= 0 && y - 2 < size)
-                        {
-                            check[x - 1][y - 2] = 1;
-                            counter++;
-                        }
-                        if (pole[x - 2][y] == '0' && x - 2 >= 0 && x - 2 < size && y >= 0 && y < size && check[x - 2][y] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x - 1;
-                            ip2[indexcounter] = y + 1;
-                        }
-                        if (check[x - 2][y] == 0 && x - 2 >= 0 && x - 2 < size && y >= 0 && y < size)
-                        {
-                            check[x - 2][y] = 1;
-                            counter++;
-                        }
-                        if (pole[x - 2][y - 1] == '0' && x - 2 >= 0 && x - 2 < size && y - 1 >= 0 && y - 1 < size && check[x - 2][y - 1] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x - 1;
-                            ip2[indexcounter] = y;
-                        }
-                        if (check[x - 2][y - 1] == 0 && x - 2 >= 0 && x - 2 < size && y - 1 >= 0 && y - 1 < size)
-                        {
-                            check[x - 2][y - 1] = 1;
-                            counter++;
-                        }
-                        if (pole[x - 2][y - 2] == '0' && x - 2 >= 0 && x - 2 < size && y - 2 >= 0 && y - 2 < size && check[x - 2][y - 2] == 0)
-                        {
-                            indexcounter++;
-                            ip1[indexcounter] = x - 1;
-                            ip2[indexcounter] = y - 1;
-                        }
-                        if (check[x - 2][y - 2] == 0 && x - 2 >= 0 && x - 2 < size && y - 2 >= 0 && y - 2 < size)
-                        {
-                            check[x - 2][y - 2] = 1;
-                            counter++;
-                        }
-                    }
-                }
-            }
-            if (debug == 1)
-            {
-                cout << "Режим отладки\n";
-                for (short i = 0; i < size; i++)
-                {
-                    for (short j = 0; j < size; j++)
-                    {
-                        if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                    }
-                    cout << endl;
-                }
-                cout << endl;
-            }
-            cout << "   ";
-            for (short i = 1; i <= size; i++)
-            {
-                if (i % 10 != 0)cout << i % 10 << " ";
-                else cout << "  ";
-            }
-            cout << endl;
-            for (short i = 0; i < size; i++)
-            {
-                if (i < 9)cout << " ";
-                cout << i + 1 << " ";
-                for (short j = 0; j < size; j++)
-                {
-                    if (check[i][j] == 1)
-                    {
-                        if (pole[i][j] == '0')cout << "- "; else cout << pole[i][j] << " ";
-                    }
-                    else cout << "* ";
-                }
-                cout << endl;
-            }
-            if (counter == (size * size) - bombs)
-            {
-                cout << "Congratulations!!!\nУспешных попаданий: " << score << endl;
-            }
-        }
-        cout << "\tНачать сначала?\n1-да\n0-нет\n";
-        cin >> end;
-        system("cls");
-    } while (end == 1);
+    int size = chooseSize();
+    counter = size * size;
+    int** field1 = createField<int>(size);
+    bool** field2 = createField<bool>(size);
+    set_bomb(field1);
+    showField(field1, field2);
+    do {
+        shoot(field1, field2);
+        showField(field1, field2);
+    } while (checkWin(size));
 }
+
