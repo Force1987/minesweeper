@@ -1,3 +1,3 @@
-# minesweeper-using-only-loops-conditions-and-arrays
+# minesweeper
 Minesweeper
 Сапер
